@@ -157,6 +157,7 @@ def transaksi(data, user):
         except EOFError:
             print(Fore.RED + "\nInput tidak valid, silahkan masukan pilihan anda")
 
+# Function untuk penukaran saldo menjadi gold
 def top_up_gold(data, user):
     while True:
         try:
