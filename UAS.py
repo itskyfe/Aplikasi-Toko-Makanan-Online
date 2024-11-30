@@ -111,44 +111,47 @@ def transaksi(data, user):
             for menu in data:
                 if pilih == menu["no"]:
                     jumlah = int(input("Masukkan jumlah makanan yang ingin dipesan : "))
-                    if jumlah > menu["stok"]:
-                        print(Fore.RED + "Stok tidak mencukupi")
+                    if jumlah <= 0:
+                        print(Fore.RED + "jumlah tidak valid")
                     else:
-                        total_harga = jumlah * menu["harga"]
-                        print(Fore.CYAN + f"Total belanjaan anda adalah : {total_harga} gold")
-                        opsi_voucher = str(input("Apakah anda ingin menggunakan voucher? (y/n): ")).lower()
-                        if opsi_voucher == "y":
-                            masukan_voucher = input("Masukkan kode voucher anda : ")
-                            for kode in voucher:
-                                if masukan_voucher == kode["kode_voucher"] and kode["status"] == "available":
-                                    if total_harga <= kode["jumlah_diskon"]:
-                                        print(Fore.RED + "Kode tidak bisa digunakan karena melebih batas diskon")
-                                    else:
-                                        total_harga_setelah_diskon = total_harga - kode["jumlah_diskon"]
-                                        if user["gold"] < total_harga_setelah_diskon:
-                                            print(Fore.RED + "Gold anda tidak cukup")
-                                        else:
-                                            user["gold"] -= total_harga_setelah_diskon
-                                            menu["stok"] -= jumlah
-                                            kode["status"] = "unavailable"
-                                            print(Fore.GREEN + "Transaksi Berhasil!")
-                                            invoice(menu["nama_makanan"], jumlah, total_harga, kode["jumlah_diskon"], total_harga_setelah_diskon)
-                                            break
-                            else:
-                                print(Fore.RED + "voucher tidak valid")
-                                break
-                        elif opsi_voucher == "n":
-                            if user["gold"] < total_harga:
-                                print(Fore.RED + "Gold anda tidak cukup")
-                            else:
-                                user["gold"] -= total_harga
-                                menu["stok"] -= jumlah
-                                diskon = "0"
-                                total_harga_setelah_diskon = total_harga
-                                print(Fore.GREEN + "Transaksi Berhasil!")
-                                invoice(menu["nama_makanan"], jumlah, total_harga, diskon, total_harga_setelah_diskon)
+                        if jumlah > menu["stok"]:
+                            print(Fore.RED + "Stok tidak mencukupi")
                         else:
-                            print(Fore.RED + "Opsi tidak ada")
+                            total_harga = jumlah * menu["harga"]
+                            print(Fore.CYAN + f"Total belanjaan anda adalah : {total_harga} gold")
+                            opsi_voucher = str(input("Apakah anda ingin menggunakan voucher? (y/n): ")).lower()
+                            if opsi_voucher == "y":
+                                masukan_voucher = input("Masukkan kode voucher anda : ")
+                                for kode in voucher:
+                                    if masukan_voucher == kode["kode_voucher"] and kode["status"] == "available":
+                                        if total_harga <= kode["jumlah_diskon"]:
+                                            print(Fore.RED + "Kode tidak bisa digunakan karena melebih batas diskon")
+                                        else:
+                                            total_harga_setelah_diskon = total_harga - kode["jumlah_diskon"]
+                                            if user["gold"] < total_harga_setelah_diskon:
+                                                print(Fore.RED + "Gold anda tidak cukup")
+                                            else:
+                                                user["gold"] -= total_harga_setelah_diskon
+                                                menu["stok"] -= jumlah
+                                                kode["status"] = "unavailable"
+                                                print(Fore.GREEN + "Transaksi Berhasil!")
+                                                invoice(menu["nama_makanan"], jumlah, total_harga, kode["jumlah_diskon"], total_harga_setelah_diskon)
+                                                break
+                                else:
+                                    print(Fore.RED + "voucher tidak valid")
+                                    break
+                            elif opsi_voucher == "n":
+                                if user["gold"] < total_harga:
+                                    print(Fore.RED + "Gold anda tidak cukup")
+                                else:
+                                    user["gold"] -= total_harga
+                                    menu["stok"] -= jumlah
+                                    diskon = "0"
+                                    total_harga_setelah_diskon = total_harga
+                                    print(Fore.GREEN + "Transaksi Berhasil!")
+                                    invoice(menu["nama_makanan"], jumlah, total_harga, diskon, total_harga_setelah_diskon)
+                            else:
+                                print(Fore.RED + "Opsi tidak ada")
                     break
         except ValueError:
             print(Fore.RED + "\nInput tidak valid, silahkan masukan pilihan anda")
@@ -156,7 +159,7 @@ def transaksi(data, user):
             print(Fore.RED + "\nInput tidak valid, silahkan masukan pilihan anda")
         except EOFError:
             print(Fore.RED + "\nInput tidak valid, silahkan masukan pilihan anda")
-
+            
 # Function untuk penukaran saldo menjadi gold
 def top_up_gold(data, user):
     while True:
